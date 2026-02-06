@@ -6,6 +6,7 @@ import confetti from 'canvas-confetti';
 import { Sparkles, Heart, Star } from 'lucide-react';
 import Navigation from './Navigation';
 import { soundManager } from '@/utils/soundManager';
+import img from '../public/ammuanbu-main.png';
 
 interface BirthdayLandingProps {
   onNavigate?: (path: 'letter' | 'memories') => void;
@@ -215,7 +216,7 @@ export default function BirthdayLanding({ onNavigate }: BirthdayLandingProps) {
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 1.2, duration: 0.8 }}
                   whileHover={{ scale: 1.05 }}
-                  src="https://placehold.co/400x600/ec4899/ffffff?text=Ammu+💕"
+                  src="/ammuanbu-main.png"
                   alt="Ammu Subiksha Barath"
                   className="w-64 h-96 md:w-80 md:h-[480px] object-cover"
                 />

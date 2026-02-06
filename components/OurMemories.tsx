@@ -16,22 +16,22 @@ interface Memory {
 const memories: Memory[] = [
   {
     id: 1,
-    image: 'https://placehold.co/400x500/ec4899/ffffff?text=Memory+1',
-    title: 'First Meeting',
+    image: '/first-pic.jpeg',
+    title: 'First pic',
     message: 'The moment I saw you, I knew my life would never be the same.',
     emoji: '💫',
   },
   {
     id: 2,
     image: 'https://placehold.co/400x500/f43f5e/ffffff?text=Memory+2',
-    title: 'Silly Moments',
+    title: 'First Walk together',
     message: 'Your laugh is my favorite sound in the entire world.',
     emoji: '😂',
   },
   {
     id: 3,
     image: 'https://placehold.co/400x500/3b82f6/ffffff?text=Memory+3',
-    title: 'Late Night Talks',
+    title: 'Pleasant Surprise from gpt',
     message: 'Hours fly by when I\'m talking to you about everything and nothing.',
     emoji: '🌙',
   },
@@ -45,105 +45,105 @@ const memories: Memory[] = [
   {
     id: 5,
     image: 'https://placehold.co/400x500/ec4899/ffffff?text=Memory+5',
-    title: 'Quiet Moments',
+    title: 'first date',
     message: 'Sometimes the best moments are the silent ones with you.',
     emoji: '🤫',
   },
   {
     id: 6,
     image: 'https://placehold.co/400x500/f43f5e/ffffff?text=Memory+6',
-    title: 'Your Kindness',
+    title: 'hand holding',
     message: 'The way you care for others makes me love you even more.',
     emoji: '🤍',
   },
   {
     id: 7,
     image: 'https://placehold.co/400x500/3b82f6/ffffff?text=Memory+7',
-    title: 'Dancing Together',
+    title: 'wee',
     message: 'Moving to our song, forgetting the rest of the world exists.',
     emoji: '💃',
   },
   {
     id: 8,
     image: 'https://placehold.co/400x500/8b5cf6/ffffff?text=Memory+8',
-    title: 'Coffee & Conversations',
+    title: 'first close moment',
     message: 'Every morning is perfect if it starts with you.',
     emoji: '☕',
   },
   {
     id: 9,
     image: 'https://placehold.co/400x500/ec4899/ffffff?text=Memory+9',
-    title: 'Supporting Dreams',
+    title: 'private sharee moment',
     message: 'You inspire me to chase my dreams and believe in myself.',
     emoji: '⭐',
   },
   {
     id: 10,
     image: 'https://placehold.co/400x500/f43f5e/ffffff?text=Memory+10',
-    title: 'Rainy Days',
+    title: 'Perfect Pic',
     message: 'With you, even rainy days feel like sunshine.',
     emoji: '🌧️',
   },
   {
     id: 11,
     image: 'https://placehold.co/400x500/3b82f6/ffffff?text=Memory+11',
-    title: 'Your Smile',
+    title: 'You and Me',
     message: 'When you smile, the whole universe smiles with you.',
     emoji: '😊',
   },
   {
     id: 12,
     image: 'https://placehold.co/400x500/06b6d4/ffffff?text=Memory+12',
-    title: 'Little Surprises',
+    title: 'Us in public',
     message: 'You always know how to make my heart skip a beat.',
     emoji: '🎁',
   },
   {
     id: 13,
     image: 'https://placehold.co/400x500/ec4899/ffffff?text=Memory+13',
-    title: 'Your Dreams',
+    title: 'Magic Moments',
     message: 'Watching you achieve your goals is my greatest joy.',
     emoji: '🚀',
   },
   {
     id: 14,
     image: 'https://placehold.co/400x500/f43f5e/ffffff?text=Memory+14',
-    title: 'Comfort',
+    title: 'Tredicinal',
     message: 'Your presence is my safe place, my home.',
     emoji: '🏠',
   },
   {
     id: 15,
     image: 'https://placehold.co/400x500/3b82f6/ffffff?text=Memory+15',
-    title: 'Your Strength',
+    title: 'Uss',
     message: 'You are the strongest, most courageous person I know.',
     emoji: '💪',
   },
   {
     id: 16,
     image: 'https://placehold.co/400x500/8b5cf6/ffffff?text=Memory+16',
-    title: 'Imagination',
+    title: 'Funny Moments',
     message: 'With you, I can dream bigger than ever before.',
     emoji: '✨',
   },
   {
     id: 17,
     image: 'https://placehold.co/400x500/ec4899/ffffff?text=Memory+17',
-    title: 'Love Grows',
+    title: 'Holding eachother',
     message: 'Every day with you, my love grows deeper and stronger.',
     emoji: '📈',
   },
   {
     id: 18,
     image: 'https://placehold.co/400x500/f43f5e/ffffff?text=Memory+18',
-    title: 'Your Eyes',
+    title: 'baby',
     message: 'I could lose myself in your eyes forever.',
     emoji: '👀',
   },
   {
     id: 19,
     image: 'https://placehold.co/400x500/3b82f6/ffffff?text=Memory+19',
-    title: 'Forever With You',
+    title: 'Best Day in our Life',
     message: 'I want to build a thousand memories more with you.',
     emoji: '🔮',
   },
@@ -299,11 +299,11 @@ export default function OurMemories() {
                   whileHover={{ scale: 1.02 }}
                   className="relative"
                 >
-                  <img
-                    src={currentMemory.image}
-                    alt={currentMemory.title}
-                    className="w-full h-80 md:h-96 object-cover"
-                  />
+<img
+  src={currentMemory.image}
+  alt={currentMemory.title}
+  className="w-3/4 aspect-[9/16] object-cover mx-auto rounded-2xl"
+/>
                   
                   {/* Animated emoji */}
                   <motion.div
