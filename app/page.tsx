@@ -1,5 +1,10 @@
 import BirthdayApp from "@/components/BirthdayApp";
 
 export default function Home() {
-  return <BirthdayApp />;
+  const handleLogout = () => {
+    // Add your logout logic here
+    console.log("Logout clicked");
+  };
+
+  return <BirthdayApp onLogout={handleLogout} />;
 }
