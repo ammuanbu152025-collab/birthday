@@ -6,7 +6,6 @@ import confetti from 'canvas-confetti';
 import { Sparkles, Heart, Star } from 'lucide-react';
 import Navigation from './Navigation';
 import { soundManager } from '@/utils/soundManager';
-import img from '../public/ammuanbu-main.png';
 
 interface BirthdayLandingProps {
   onNavigate?: (path: 'letter' | 'memories') => void;
@@ -16,11 +15,10 @@ export default function BirthdayLanding({ onNavigate }: BirthdayLandingProps) {
   const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
-    // Initial entrance sound
-    setTimeout(() => soundManager.playShimmer(), 200);
-    setTimeout(() => soundManager.playSuccess(), 500);
-
-    const duration = 5 * 1000;
+    // Initial entrance sound - gentler
+    setTimeout(() => soundManager.playShimmer(), 300);
+    
+    const duration = 4 * 1000; // Reduced from 5s to 4s
     const animationEnd = Date.now() + duration;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
 
@@ -38,11 +36,6 @@ export default function BirthdayLanding({ onNavigate }: BirthdayLandingProps) {
 
       const particleCount = 50 * (timeLeft / duration);
 
-      // Play pop sound occasionally with confetti
-      if (Math.random() < 0.3) {
-        soundManager.playPop();
-      }
-
       confetti({
         ...defaults,
         particleCount,
@@ -55,19 +48,19 @@ export default function BirthdayLanding({ onNavigate }: BirthdayLandingProps) {
         origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
         colors: ['#ef4444', '#3b82f6', '#ec4899', '#f43f5e'],
       });
-    }, 250);
+    }, 300); // Increased from 250ms
 
     setTimeout(() => {
       setShowContent(true);
       soundManager.playChime();
     }, 500);
 
-    // Ambient background sounds
+    // Reduced ambient sound frequency
     const ambientInterval = setInterval(() => {
-      if (Math.random() < 0.3) {
+      if (Math.random() < 0.2) { // Reduced from 0.3 to 0.2
         soundManager.playAmbientNote();
       }
-    }, 8000);
+    }, 12000); // Increased from 8000ms to 12000ms
 
     return () => {
       clearInterval(interval);
@@ -76,7 +69,6 @@ export default function BirthdayLanding({ onNavigate }: BirthdayLandingProps) {
   }, []);
 
   const handleConfettiClick = () => {
-    soundManager.playPop();
     soundManager.playSparkle();
     
     confetti({
@@ -95,8 +87,8 @@ export default function BirthdayLanding({ onNavigate }: BirthdayLandingProps) {
           <motion.div
             key={i}
             initial={{
-              x: Math.random() * window.innerWidth,
-              y: Math.random() * window.innerHeight,
+              x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1000),
+              y: Math.random() * (typeof window !== 'undefined' ? window.innerHeight : 1000),
               opacity: 0,
             }}
             animate={{
@@ -337,7 +329,6 @@ export default function BirthdayLanding({ onNavigate }: BirthdayLandingProps) {
                     delay: 2 + index * 0.1,
                     duration: 0.5,
                   }}
-                  onMouseEnter={() => soundManager.playSparkle()}
                   className="cursor-pointer"
                 >
                   {emoji}

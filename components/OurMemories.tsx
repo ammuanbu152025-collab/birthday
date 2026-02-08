@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronUp, ChevronDown, Heart, Sparkles } from 'lucide-react';
 import { soundManager } from '@/utils/soundManager';
@@ -18,126 +18,126 @@ const memories: Memory[] = [
     id: 1,
     image: '/first-pic.jpeg',
     title: 'First pic',
-    message: 'The moment I saw you, I knew my life would never be the same.',
+    message: 'The moment I saw you, as just a girl.',
     emoji: '💫',
   },
   {
     id: 2,
     image: '/FirstWalkTogethar.jpeg',
     title: 'First Walk together',
-    message: 'Your laugh is my favorite sound in the entire world.',
-    emoji: '😂',
+    message: 'The first time we walked together, After I start Feeling ssomething.',
+    emoji: '🌟',
   },
   {
     id: 3,
     image: '/gptPrediction.jpeg',
     title: 'Pleasant Surprise from gpt',
-    message: 'Hours fly by when I\'m talking to you about everything and nothing.',
+    message: 'GPT Predicted the future of our relationship.',
     emoji: '🌙',
   },
   {
     id: 4,
     image: '/the memory.jpeg',
     title: 'Adventures Together',
-    message: 'Every place is more beautiful when you\'re by my side.',
+    message: 'The moments we share together are the most precious memories of my life.',
     emoji: '✈️',
   },
   {
     id: 5,
     image: '/first hand hold.jpeg',
     title: 'first date',
-    message: 'Sometimes the best moments are the silent ones with you.',
-    emoji: '🤫',
+    message: 'I really nerves while you holding my hand but Lovely.',
+    emoji: '🥰',
   },
   {
     id: 6,
     image: '/handHolding.jpeg',
     title: 'hand holding',
-    message: 'The way you care for others makes me love you even more.',
+    message: 'Most Comfortable moment of my life seriusly.',
     emoji: '🤍',
   },
   {
     id: 7,
     image: '/wee.jpeg',
     title: 'wee',
-    message: 'Moving to our song, forgetting the rest of the world exists.',
-    emoji: '💃',
+    message: 'The Moment I Forgot My Self.',
+    emoji: '💙',
   },
   {
     id: 8,
     image: '/privateSareeMoment.jpeg',
-    title: 'first close moment',
-    message: 'Every morning is perfect if it starts with you.',
-    emoji: '☕',
+    title: 'My Queen',
+    message: 'You dressed up For me,As my Queen.',
+    emoji: '👑',
   },
   {
     id: 9,
     image: '/magic moments.jpeg',
-    title: 'private sharee moment',
-    message: 'You inspire me to chase my dreams and believe in myself.',
-    emoji: '⭐',
+    title: 'Magic Moments',
+    message: 'Un Forgoten memories we created on this dress.',
+    emoji: '🫣',
   },
   {
     id: 10,
     image: '/Perfect.jpeg',
     title: 'Perfect Pic',
-    message: 'With you, even rainy days feel like sunshine.',
-    emoji: '🌧️',
+    message: 'I actually seen this Pic for more than 100 times since we taken.',
+    emoji: '😍',
   },
   {
     id: 11,
     image: '/u and me.jpeg',
     title: 'You and Me',
-    message: 'When you smile, the whole universe smiles with you.',
+    message: 'I want to recreate this thing with you dee....',
     emoji: '😊',
   },
   {
     id: 12,
     image: '/us in Public.jpeg',
     title: 'Us in public',
-    message: 'You always know how to make my heart skip a beat.',
+    message: 'This pic whare me potrated as your husband by your mom.',
     emoji: '🎁',
   },
   {
     id: 13,
     image: '/Mine.jpeg',
-    title: 'Tredicinal',
-    message: 'Your presence is my safe place, my home.',
+    title: 'Mine',
+    message: 'I think Im Pointing to my food? that i can ate forever!!.',
     emoji: '🏠',
   },
   {
     id: 14,
     image: '/uss.jpeg',
     title: 'Uss',
-    message: 'You are the strongest, most courageous person I know.',
+    message: 'Wow How Bueaty full is she.',
     emoji: '💪',
   },
   {
     id: 15,
     image: '/funny moments.jpeg',
     title: 'Funny Moments',
-    message: 'With you, I can dream bigger than ever before.',
+    message: 'i want to create millions of this kind of stupid memories.',
     emoji: '✨',
   },
   {
     id: 16,
-    image: '/real baby.jpeg',
+    image: '/real baby.png',
     title: 'baby',
-    message: 'I could lose myself in your eyes forever.',
+    message: 'We Know Each Other since Then Ammuu.',
     emoji: '👀',
   },
   {
     id: 17,
     image: '/WhatsApp Image 2026-02-06 at 11.31.52 PM (1).jpeg',
     title: 'Best Day in our Life',
-    message: 'I want to build a thousand memories more with you.',
+    message: 'First time our lips talked togather.',
     emoji: '🔮',
   },
   {
     id: 18,
     image: '/ammuanbu-main.png',
     title: 'My Everything',
-    message: 'You are my beginning, my middle, and my happy ending.',
+    message: 'Can i Kiss you?',
     emoji: '💕',
   },
 ];
@@ -145,6 +145,28 @@ const memories: Memory[] = [
 export default function OurMemories() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [windowSize, setWindowSize] = useState({ width: 1000, height: 1000 });
+
+  useEffect(() => {
+    // Set initial window size
+    if (typeof window !== 'undefined') {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+
+      // Update on resize
+      const handleResize = () => {
+        setWindowSize({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        });
+      };
+
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
   const goNext = () => {
     soundManager.playDing();
@@ -180,8 +202,8 @@ export default function OurMemories() {
           <motion.div
             key={i}
             initial={{
-              x: Math.random() * window.innerWidth,
-              y: window.innerHeight + 100,
+              x: Math.random() * windowSize.width,
+              y: windowSize.height + 100,
             }}
             animate={{
               y: -100,
@@ -285,11 +307,11 @@ export default function OurMemories() {
                   whileHover={{ scale: 1.02 }}
                   className="relative"
                 >
-<img
-  src={currentMemory.image}
-  alt={currentMemory.title}
-  className="w-3/4 aspect-[9/16] object-cover mx-auto rounded-2xl"
-/>
+                  <img
+                    src={currentMemory.image}
+                    alt={currentMemory.title}
+                    className="w-3/4 aspect-[9/16] object-cover mx-auto rounded-2xl"
+                  />
                   
                   {/* Animated emoji */}
                   <motion.div

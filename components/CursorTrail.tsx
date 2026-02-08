@@ -11,7 +11,7 @@ interface Sparkle {
   emoji: string;
 }
 
-const sparkleEmojis = ['✨', '💫', '⭐', '🌟', '💖', '💕'];
+const sparkleEmojis = ['✨', '💫', '⭐'];
 
 export default function CursorTrail() {
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
@@ -20,14 +20,18 @@ export default function CursorTrail() {
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       const now = Date.now();
-      if (now - lastTimeRef.current < 50) return;
+      // Increased delay from 50ms to 150ms for less frequency
+      if (now - lastTimeRef.current < 150) return;
       lastTimeRef.current = now;
+
+      // Only 30% chance to create sparkle
+      if (Math.random() > 0.3) return;
 
       const newSparkle: Sparkle = {
         id: Math.random().toString(36),
         x: e.clientX,
         y: e.clientY,
-        size: Math.random() * 20 + 8,
+        size: Math.random() * 12 + 6,
         emoji: sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)],
       };
 
@@ -35,20 +39,22 @@ export default function CursorTrail() {
 
       setTimeout(() => {
         setSparkles((prev) => prev.filter((s) => s.id !== newSparkle.id));
-      }, 1000);
+      }, 800);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
       const touch = e.touches[0];
       const now = Date.now();
-      if (now - lastTimeRef.current < 50) return;
+      if (now - lastTimeRef.current < 150) return;
       lastTimeRef.current = now;
+
+      if (Math.random() > 0.3) return;
 
       const newSparkle: Sparkle = {
         id: Math.random().toString(36),
         x: touch.clientX,
         y: touch.clientY,
-        size: Math.random() * 20 + 8,
+        size: Math.random() * 12 + 6,
         emoji: sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)],
       };
 
@@ -56,7 +62,7 @@ export default function CursorTrail() {
 
       setTimeout(() => {
         setSparkles((prev) => prev.filter((s) => s.id !== newSparkle.id));
-      }, 1000);
+      }, 800);
     };
 
     window.addEventListener('mousemove', handleMouseMove);
@@ -77,40 +83,27 @@ export default function CursorTrail() {
             x: sparkle.x,
             y: sparkle.y,
             scale: 0,
-            opacity: 1,
+            opacity: 0.6,
             rotate: 0,
           }}
           animate={{
-            y: sparkle.y - 80,
-            scale: [0, 1.2, 0],
-            opacity: [1, 1, 0],
-            rotate: 360,
+            y: sparkle.y - 40,
+            scale: [0, 0.8, 0],
+            opacity: [0.6, 0.8, 0],
+            rotate: 180,
           }}
           transition={{
-            duration: 1,
+            duration: 0.8,
             ease: 'easeOut',
           }}
-          className="fixed text-2xl"
+          className="fixed text-sm"
           style={{
             left: 0,
             top: 0,
-            filter: 'drop-shadow(0 0 3px rgba(255, 255, 255, 0.8))',
+            filter: 'drop-shadow(0 0 2px rgba(255, 255, 255, 0.4))',
           }}
         >
-          <motion.div
-            animate={{
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 0.3,
-              repeat: 2,
-            }}
-            style={{
-              transform: `translate(${sparkle.x}px, ${sparkle.y}px)`,
-            }}
-          >
-            {sparkle.emoji}
-          </motion.div>
+          {sparkle.emoji}
         </motion.div>
       ))}
     </div>

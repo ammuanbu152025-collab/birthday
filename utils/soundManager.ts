@@ -1,209 +1,320 @@
-// Sound Manager Utility
-// Handles all sound effects throughout the application
-
-interface SoundOptions {
-  volume?: number;
-  duration?: number;
-  type?: OscillatorType;
-}
-
+// /utils/soundManager.ts
 class SoundManager {
+  private enabled = true;
+  private muted = false;
   private audioContext: AudioContext | null = null;
-  private isMuted: boolean = false;
 
-  constructor() {
-    if (typeof window !== 'undefined' && 'AudioContext' in window) {
+  private initAudioContext() {
+    if (typeof window === 'undefined') return;
+    if (!this.audioContext) {
       this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
   }
 
+  setEnabled(enabled: boolean) {
+    this.enabled = enabled;
+  }
+
+  isEnabled() {
+    return this.enabled;
+  }
+
   setMuted(muted: boolean) {
-    this.isMuted = muted;
+    this.muted = muted;
   }
 
-  private playTone(frequency: number, options: SoundOptions = {}) {
-    if (this.isMuted || !this.audioContext) return;
-
-    const {
-      volume = 0.15,
-      duration = 0.2,
-      type = 'sine'
-    } = options;
-
-    try {
-      const oscillator = this.audioContext.createOscillator();
-      const gainNode = this.audioContext.createGain();
-
-      oscillator.connect(gainNode);
-      gainNode.connect(this.audioContext.destination);
-
-      oscillator.frequency.value = frequency;
-      oscillator.type = type;
-
-      gainNode.gain.setValueAtTime(volume, this.audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration);
-
-      oscillator.start(this.audioContext.currentTime);
-      oscillator.stop(this.audioContext.currentTime + duration);
-    } catch (error) {
-      console.log('Audio playback error:', error);
-    }
+  isMuted() {
+    return this.muted;
   }
 
-  // Magical sparkle sound (for cursor trail, confetti)
-  playSparkle() {
-    if (this.isMuted || !this.audioContext) return;
-
-    const frequencies = [800, 1200, 1600];
-    frequencies.forEach((freq, index) => {
-      setTimeout(() => {
-        this.playTone(freq, { volume: 0.08, duration: 0.15, type: 'sine' });
-      }, index * 40);
-    });
+  private shouldPlaySound(): boolean {
+    return this.enabled && !this.muted;
   }
 
-  // Success/unlock sound (for password unlock)
-  playSuccess() {
-    if (this.isMuted || !this.audioContext) return;
-
-    const melody = [
-      { freq: 523.25, delay: 0 },     // C5
-      { freq: 659.25, delay: 100 },   // E5
-      { freq: 783.99, delay: 200 },   // G5
-      { freq: 1046.50, delay: 300 },  // C6
-    ];
-
-    melody.forEach(({ freq, delay }) => {
-      setTimeout(() => {
-        this.playTone(freq, { volume: 0.2, duration: 0.3, type: 'sine' });
-      }, delay);
-    });
-  }
-
-  // Button hover sound
-  playHover() {
-    this.playTone(600, { volume: 0.1, duration: 0.1, type: 'sine' });
-  }
-
-  // Button click sound
-  playClick() {
-    this.playTone(800, { volume: 0.15, duration: 0.15, type: 'sine' });
-  }
-
-  // Romantic whoosh sound (for page transitions)
-  playWhoosh() {
-    if (this.isMuted || !this.audioContext) return;
-
-    try {
-      const oscillator = this.audioContext.createOscillator();
-      const gainNode = this.audioContext.createGain();
-      const filter = this.audioContext.createBiquadFilter();
-
-      oscillator.connect(filter);
-      filter.connect(gainNode);
-      gainNode.connect(this.audioContext.destination);
-
-      oscillator.type = 'sawtooth';
-      filter.type = 'lowpass';
-
-      const now = this.audioContext.currentTime;
-
-      oscillator.frequency.setValueAtTime(200, now);
-      oscillator.frequency.exponentialRampToValueAtTime(50, now + 0.5);
-
-      filter.frequency.setValueAtTime(2000, now);
-      filter.frequency.exponentialRampToValueAtTime(100, now + 0.5);
-
-      gainNode.gain.setValueAtTime(0.15, now);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-
-      oscillator.start(now);
-      oscillator.stop(now + 0.5);
-    } catch (error) {
-      console.log('Whoosh sound error:', error);
-    }
-  }
-
-  // Heart beat sound
-  playHeartbeat() {
-    if (this.isMuted || !this.audioContext) return;
-
-    const beat = () => {
-      this.playTone(100, { volume: 0.2, duration: 0.1, type: 'sine' });
-      setTimeout(() => {
-        this.playTone(80, { volume: 0.15, duration: 0.1, type: 'sine' });
-      }, 100);
-    };
-
-    beat();
-  }
-
-  // Confetti pop sound
-  playPop() {
-    if (this.isMuted || !this.audioContext) return;
-
-    try {
-      const oscillator = this.audioContext.createOscillator();
-      const gainNode = this.audioContext.createGain();
-
-      oscillator.connect(gainNode);
-      gainNode.connect(this.audioContext.destination);
-
-      oscillator.frequency.setValueAtTime(100, this.audioContext.currentTime);
-      oscillator.frequency.exponentialRampToValueAtTime(1000, this.audioContext.currentTime + 0.05);
-
-      gainNode.gain.setValueAtTime(0.3, this.audioContext.currentTime);
-      gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + 0.15);
-
-      oscillator.start(this.audioContext.currentTime);
-      oscillator.stop(this.audioContext.currentTime + 0.15);
-    } catch (error) {
-      console.log('Pop sound error:', error);
-    }
-  }
-
-  // Gentle chime (for card flip, navigation)
-  playChime() {
-    if (this.isMuted || !this.audioContext) return;
-
-    const notes = [523.25, 659.25, 783.99]; // C, E, G
-    notes.forEach((freq, i) => {
-      setTimeout(() => {
-        this.playTone(freq, { volume: 0.12, duration: 0.4, type: 'sine' });
-      }, i * 80);
-    });
-  }
-
-  // Romantic shimmer (for love letter appearance)
+  // Soft romantic shimmer (like fairy dust)
   playShimmer() {
-    if (this.isMuted || !this.audioContext) return;
+    if (!this.shouldPlaySound()) return;
+    this.initAudioContext();
+    if (!this.audioContext) return;
 
-    for (let i = 0; i < 5; i++) {
-      setTimeout(() => {
-        const freq = 1000 + Math.random() * 1000;
-        this.playTone(freq, { volume: 0.08, duration: 0.2, type: 'triangle' });
-      }, i * 100);
-    }
-  }
+    const ctx = this.audioContext;
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
 
-  // Soft ding (for memory navigation)
-  playDing() {
-    this.playTone(1200, { volume: 0.15, duration: 0.3, type: 'sine' });
-  }
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
 
-  // Error/wrong password sound
-  playError() {
-    this.playTone(200, { volume: 0.2, duration: 0.3, type: 'square' });
-  }
-
-  // Ambient background music note
-  playAmbientNote() {
-    if (this.isMuted || !this.audioContext) return;
-
-    const frequencies = [261.63, 329.63, 392.00, 523.25]; // C, E, G, C
-    const randomFreq = frequencies[Math.floor(Math.random() * frequencies.length)];
+    oscillator.frequency.setValueAtTime(1200, ctx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(2400, ctx.currentTime + 0.3);
     
-    this.playTone(randomFreq, { volume: 0.05, duration: 2, type: 'sine' });
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+
+    oscillator.type = 'sine';
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 0.4);
+  }
+
+  // Gentle chime (like wind chimes)
+  playChime() {
+    if (!this.shouldPlaySound()) return;
+    this.initAudioContext();
+    if (!this.audioContext) return;
+
+    const ctx = this.audioContext;
+    const frequencies = [523.25, 659.25, 783.99]; // C5, E5, G5 (major chord)
+
+    frequencies.forEach((freq, index) => {
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      oscillator.frequency.setValueAtTime(freq, ctx.currentTime);
+      oscillator.type = 'sine';
+
+      gainNode.gain.setValueAtTime(0, ctx.currentTime);
+      gainNode.gain.linearRampToValueAtTime(0.06, ctx.currentTime + 0.05 + index * 0.1);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.5);
+
+      oscillator.start(ctx.currentTime + index * 0.1);
+      oscillator.stop(ctx.currentTime + 1.5);
+    });
+  }
+
+  // Pleasant ding sound (for navigation)
+  playDing() {
+    if (!this.shouldPlaySound()) return;
+    this.initAudioContext();
+    if (!this.audioContext) return;
+
+    const ctx = this.audioContext;
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.frequency.setValueAtTime(880, ctx.currentTime); // A5 note
+    oscillator.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.05);
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.08, ctx.currentTime + 0.02);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 0.3);
+  }
+
+  // Soft heartbeat (subtle and romantic)
+  playHeartbeat() {
+    if (!this.shouldPlaySound()) return;
+    this.initAudioContext();
+    if (!this.audioContext) return;
+
+    const ctx = this.audioContext;
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.frequency.setValueAtTime(60, ctx.currentTime);
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 0.3);
+  }
+
+  // Gentle whoosh (page transitions)
+  playWhoosh() {
+    if (!this.shouldPlaySound()) return;
+    this.initAudioContext();
+    if (!this.audioContext) return;
+
+    const ctx = this.audioContext;
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+    const filter = ctx.createBiquadFilter();
+
+    oscillator.connect(filter);
+    filter.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(2000, ctx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.3);
+
+    oscillator.frequency.setValueAtTime(800, ctx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.3);
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 0.3);
+  }
+
+  // Soft sparkle (magical twinkle)
+  playSparkle() {
+    if (!this.shouldPlaySound()) return;
+    this.initAudioContext();
+    if (!this.audioContext) return;
+
+    const ctx = this.audioContext;
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.frequency.setValueAtTime(2000, ctx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(3000, ctx.currentTime + 0.1);
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.02);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 0.2);
+  }
+
+  // Subtle hover sound
+  playHover() {
+    if (!this.shouldPlaySound()) return;
+    this.initAudioContext();
+    if (!this.audioContext) return;
+
+    const ctx = this.audioContext;
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.frequency.setValueAtTime(800, ctx.currentTime);
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 0.05);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 0.15);
+  }
+
+  // Gentle click
+  playClick() {
+    if (!this.shouldPlaySound()) return;
+    this.initAudioContext();
+    if (!this.audioContext) return;
+
+    const ctx = this.audioContext;
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.frequency.setValueAtTime(400, ctx.currentTime);
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(0.08, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 0.08);
+  }
+
+  // Romantic success tone
+  playSuccess() {
+    if (!this.shouldPlaySound()) return;
+    this.initAudioContext();
+    if (!this.audioContext) return;
+
+    const ctx = this.audioContext;
+    const notes = [523.25, 659.25, 783.99, 1046.5]; // C-E-G-C progression
+
+    notes.forEach((freq, index) => {
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      oscillator.frequency.setValueAtTime(freq, ctx.currentTime);
+      oscillator.type = 'sine';
+
+      const startTime = ctx.currentTime + index * 0.1;
+      gainNode.gain.setValueAtTime(0, startTime);
+      gainNode.gain.linearRampToValueAtTime(0.06, startTime + 0.05);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.4);
+
+      oscillator.start(startTime);
+      oscillator.stop(startTime + 0.4);
+    });
+  }
+
+  // Soft pop (for confetti)
+  playPop() {
+    if (!this.shouldPlaySound()) return;
+    this.initAudioContext();
+    if (!this.audioContext) return;
+
+    const ctx = this.audioContext;
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.frequency.setValueAtTime(150, ctx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(50, ctx.currentTime + 0.1);
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 0.1);
+  }
+
+  // Ambient romantic note (background atmosphere)
+  playAmbientNote() {
+    if (!this.shouldPlaySound()) return;
+    this.initAudioContext();
+    if (!this.audioContext) return;
+
+    const ctx = this.audioContext;
+    const frequencies = [261.63, 329.63, 392.00]; // C4, E4, G4
+    const randomFreq = frequencies[Math.floor(Math.random() * frequencies.length)];
+
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    oscillator.frequency.setValueAtTime(randomFreq, ctx.currentTime);
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(0, ctx.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.02, ctx.currentTime + 0.5);
+    gainNode.gain.linearRampToValueAtTime(0.02, ctx.currentTime + 1.5);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5);
+
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 2.5);
   }
 }
 
