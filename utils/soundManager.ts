@@ -289,6 +289,35 @@ class SoundManager {
     oscillator.stop(ctx.currentTime + 0.1);
   }
 
+  // Error sound (gentle but noticeable)
+  playError() {
+    if (!this.shouldPlaySound()) return;
+    this.initAudioContext();
+    if (!this.audioContext) return;
+
+    const ctx = this.audioContext;
+    
+    // Two descending tones for error indication
+    [400, 300].forEach((freq, index) => {
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      oscillator.frequency.setValueAtTime(freq, ctx.currentTime);
+      oscillator.type = 'sine';
+
+      const startTime = ctx.currentTime + index * 0.15;
+      gainNode.gain.setValueAtTime(0, startTime);
+      gainNode.gain.linearRampToValueAtTime(0.1, startTime + 0.05);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+
+      oscillator.start(startTime);
+      oscillator.stop(startTime + 0.3);
+    });
+  }
+
   // Ambient romantic note (background atmosphere)
   playAmbientNote() {
     if (!this.shouldPlaySound()) return;
